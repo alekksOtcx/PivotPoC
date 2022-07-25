@@ -1,0 +1,19 @@
+{
+  "name": "pivottablepoc",
+  "version": "6.13.4",
+  "description": "Pivot Table PoC",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alekksOtcx/PivotPoC.git"
+  },
+  "author": "Alex Lekkas",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alekksOtcx/PivotPoC/issues"
+  },
+  "homepage": "https://github.com/alekksOtcx/PivotPoC#readme"
+}
