@@ -1,41 +1,32 @@
 var webpack = require("webpack");
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const path = require('path');
-var WebpackOpenBrowser  = require('webpack-open-browser').default;
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const path = require("path");
 
 module.exports = {
+  context: __dirname,
   entry: "./src/index.js",
   mode: "development",
-  watch: true,
   watchOptions: {
-   aggregateTimeout: 200,
-   poll: 1000,
-   ignored: /node_modules/,
- },
-  // Resolve to output directory and set file
-  output: {
-   path: path.resolve(__dirname, './dist/assets'),
-   filename: '[name].bundle.js',
-   clean: true
+    aggregateTimeout: 200,
+    poll: 1000,
   },
-
-  optimization: {
-   runtimeChunk: 'single',
- },
-
+  output: {
+    path: path.resolve(__dirname, "dist"),
+    filename: "main.js",
+    publicPath: "/",
+  },
   // Add Url param to open browser plugin
   plugins: [
-   new HtmlWebpackPlugin({
-      template: './dist/assets/index.html',
-     }),
- ],
-
+    new HtmlWebpackPlugin({
+      template: path.resolve(__dirname, "public/index.html"),
+      filename: "index.html",
+      inject: "body",
+    }),
+  ],
   // Set dev-server configuration
   devServer: {
-   static: './dist',
-   hot:true,
-   open: true,
- },
+    historyApiFallback: true,
+  },
 
   // Add babel-loader to transpile js and jsx files
   module: {
@@ -60,6 +51,36 @@ module.exports = {
           },
         ],
       },
-    ]
+      {
+        test: /\.css$/,
+        use: [
+          {
+            loader: "style-loader",
+          },
+          {
+            loader: "css-loader",
+          },
+        ],
+      },
+      {
+        test: /\.csv$/,
+        loader: "csv-loader",
+        options: {
+          dynamicTyping: true,
+          header: true,
+          skipEmptyLines: true,
+        },
+      },
+      {
+        test: /\.txt$/i,
+        use: 'raw-loader',
+      },
+    ],
+  },
+  resolve: {
+    extensions: ["", ".js", ".jsx", ".css"],
+    fallback: {
+      fs: false
+    }
   },
 };

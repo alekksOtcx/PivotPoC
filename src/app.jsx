@@ -1,10 +1,16 @@
-import React from "react";
+import React from 'react';
+import { ReactPivotTable } from './react-pivottable.jsx';
+
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = props;
+  }
 
   render() {
     return (
       <div>
-        <h1>Hello World in React</h1>
+        <ReactPivotTable />
       </div>
     );
   }
