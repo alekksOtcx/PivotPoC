@@ -10,7 +10,9 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <ReactPivotTable />
+        <div>
+          <ReactPivotTable />
+        </div>
       </div>
     );
   }

@@ -21,6 +21,7 @@
   "homepage": "https://github.com/alekksOtcx/PivotPoC#readme",
   "dependencies": {
     "css-loader": "^6.7.1",
+    "npm-force-resolutions": "0.0.10",
     "react": "^15.7.0",
     "react-dom": "^15.7.0",
     "style-loader": "^3.3.1",
@@ -39,6 +40,7 @@
     "raw-loader": "^4.0.2",
     "react-pivottable": "^0.11.0",
     "react-plotly.js": "^2.5.1",
+    "universal-cookie": "^4.0.4",
     "webpack": "^5.74.0",
     "webpack-cli": "^4.10.0",
     "webpack-dev-server": "^4.9.3",
