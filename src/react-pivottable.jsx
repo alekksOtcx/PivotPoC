@@ -5,6 +5,7 @@ import 'react-pivottable/pivottable.css';
 import TableRenderers from 'react-pivottable/TableRenderers';
 import Plot from 'react-plotly.js';
 import createPlotlyRenderers from 'react-pivottable/PlotlyRenderers'
+import Cookies from 'universal-cookie';
 
 // create Plotly renderers via dependency injection
 const PlotlyRenderers = createPlotlyRenderers(Plot);
@@ -31,24 +32,37 @@ class ReactPivotTable extends React.Component {
     this.state = props;
     fetchSampleData().then((result) => {
       console.log(result.data);
-      var defaultRows = result.data[0];
-      this.setState({ data: result.data, defaultRows});
+      const cookies = new Cookies();
+      var defaultRows = cookies.get("newRows") || result.data[0];
+      var defaultColumns = cookies.get("newColumns");
+      this.setState({ data: result.data, defaultRows, defaultColumns, pivotState: this.state.pivotState });
     });
   }
 
-  render() {
-    var currencyUSDFilter = { //cant get this to do anything
-      "currency":{
-        "USD": false
-      }
+  onRefresh(pivotState) {
+    if (pivotState.rows || pivotState.cols) {
+      const cookies = new Cookies();
+      cookies.set("newColumns", pivotState.cols, { path: "/" });
+      cookies.set("newRows", pivotState.rows, { path: "/" });
     }
+    }
+
+  render() {
+    var currencyUSDFilter = {
+      //hides usd by default
+      "Currency": {
+        "USD": false,
+      },
+    };
     return (
       <div>
         <div>
           <PivotTableUI
             data={this.state.data}
             rows={this.state.defaultRows}
+            cols={this.state.defaultColumns}
             valueFilter={currencyUSDFilter}
+            onRefresh={this.onRefresh(this.state)}
             onChange={(s) => this.setState(s)}
             renderers={Object.assign({}, TableRenderers, PlotlyRenderers)}
             {...this.state}
