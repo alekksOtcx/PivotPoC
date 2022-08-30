@@ -1,5 +1,6 @@
 import React from 'react';
 import { ReactPivotTable } from './react-pivottable.jsx';
+import { WebDataRocksPivotTable } from './webdatarocks.jsx';
 
 class App extends React.Component {
   constructor(props) {
@@ -10,8 +11,11 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <div>
+        {/* <div>
           <ReactPivotTable />
+        </div> */}
+        <div>
+          <WebDataRocksPivotTable />
         </div>
       </div>
     );
