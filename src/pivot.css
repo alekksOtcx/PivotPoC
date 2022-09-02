@@ -1,0 +1,24 @@
+#wdr-pivot-view #wdr-grid-view div.alter1 {
+background-color: #eff9ff;
+}
+
+#wdr-pivot-view #wdr-grid-view div.highOffer {
+background-color: #ed644c;
+}
+
+#wdr-pivot-view #wdr-grid-view div.midOffer {
+background-color: #eda24c;
+}
+
+#wdr-pivot-view #wdr-grid-view div.maxBid {
+background-color: #e61f29;
+}
+
+#wdr-pivot-view #wdr-grid-view div.lowOffer {
+ background-color: #9ced4c;
+}
+
+#wdr-pivot-view #wdr-grid-view div.alter2 {
+background-color: #cceeff;
+}
+
