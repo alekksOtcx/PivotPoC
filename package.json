@@ -24,10 +24,12 @@
     "buffer": "^6.0.3",
     "chart.js": "^3.9.1",
     "css-loader": "^6.7.1",
+    "fusioncharts": "^3.19.0",
     "npm-force-resolutions": "0.0.10",
     "react": "^18.2.0",
     "react-chartjs-2": "^4.3.1",
     "react-dom": "^18.2.0",
+    "react-fusioncharts": "^4.0.0",
     "stream": "0.0.2",
     "style-loader": "^3.3.1",
     "uninstall": "0.0.0"
