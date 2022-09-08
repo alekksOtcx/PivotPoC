@@ -42,6 +42,7 @@ class WebDataRocksPivotTable extends React.Component {
     this.customizeCellFunction = this.customizeCellFunction.bind(this);
     this.createCharts = this.createCharts.bind(this);
     this.drawChart = this.drawChart.bind(this);
+    this.updateChart = this.updateChart.bind(this);
     this.saveReport = this.saveReport.bind(this);
     this.customizeToolbar = this.customizeToolbar.bind(this);
     this.handleCellClick = this.handleCellClick.bind(this);
@@ -111,15 +112,20 @@ class WebDataRocksPivotTable extends React.Component {
       },
     };
     var ctx = document.getElementById("chart").getContext("2d");
-    var chart = new Chart(ctx, {
+    window.chart = new Chart(ctx, {
       data: data_for_charts,
       type: "polarArea",
       options: options,
     });
   }
 
+  updateChart(rawData) {
+    chart.destroy();
+    this.drawChart(rawData);
+}
+
   createCharts() {
-    this.myRef.webdatarocks.getData({}, this.drawChart, this.drawChart);
+    this.myRef.webdatarocks.getData({}, this.drawChart, this.updateChart);
   }
 
   customizeCellFunction(cellBuilder, cellData) {
@@ -181,10 +187,18 @@ class WebDataRocksPivotTable extends React.Component {
     for (var i=0; i < length; i++){
       if(i != column){
         var otherCell = this.myRef.webdatarocks.getCell(row, i);
+        if (otherCell.type == "header") {
+          selectedData.push({name:otherCell.member.hierarchyName, value:otherCell.member.caption});
+        } else {
         selectedData.push({name:otherCell.measure.uniqueName, value:otherCell.label});
+        }
       }
     }
-    console.log(selectedData);
+    var label = "";
+    for (var i=0; i< selectedData.length; i++){
+      label = label + " " + selectedData[i].name +": " + selectedData[i].value + "\n";
+    }
+    alert(label);
   }
 
   render() {
