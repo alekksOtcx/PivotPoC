@@ -11,11 +11,11 @@ background-color: #eda24c;
 }
 
 #wdr-pivot-view #wdr-grid-view div.maxBid {
-background-color: #e61f29;
+background-color: #ee6e3f;
 }
 
-#wdr-pivot-view #wdr-grid-view div.lowOffer {
- background-color: #9ced4c;
+#wdr-pivot-view #wdr-grid-view div.minOffer {
+ background-color: #ee6e3f;
 }
 
 #wdr-pivot-view #wdr-grid-view div.alter2 {

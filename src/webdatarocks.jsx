@@ -30,25 +30,53 @@ class WebDataRocksPivotTable extends React.Component {
   constructor(props) {
     super(props);
     this.myRef = React.createRef();
-    fetchSampleData().then((result) => {
-      this.setState({ data: result.data });
-      var bidIndex = result.data[0].findIndex((val) => val == "Bid");
-      var maxBid = parseFloat(result.data[1][bidIndex]);
-      for (var i = 2; i < result.data.length - 1; i++) {
-        maxBid = Math.max(parseFloat(result.data[i][bidIndex]), maxBid);
-      }
-      this.setState({ maxBid: maxBid, webdatarocks: "" });
-    });
+
     this.customizeCellFunction = this.customizeCellFunction.bind(this);
     this.createCharts = this.createCharts.bind(this);
     this.drawChart = this.drawChart.bind(this);
     this.updateChart = this.updateChart.bind(this);
     this.saveReport = this.saveReport.bind(this);
+    this.loadReport = this.loadReport.bind(this);
     this.customizeToolbar = this.customizeToolbar.bind(this);
     this.handleCellClick = this.handleCellClick.bind(this);
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    var data = getRunsData();
+    var maxBids = [];
+    var minOffers = [];
+    var maxBid = parseFloat(data[1].Bid);
+    var minOffer = parseFloat(data[1].Offer);
+    var maxBidId = data[1].Id;
+    var minOfferId = data[1].Id;
+    for (var i = 2; i < data.length - 1; i++) {
+      //assume data sorted by incremental Id
+      if (data[i].Id == maxBidId) {
+        maxBid = Math.max(parseFloat(data[i].Bid), maxBid);
+        if(maxBids.find((x) => x.key == maxBidId) != null){
+          maxBids.find((x) => x.key == maxBidId).value = maxBid;
+        } else {
+        maxBids.push({ key: maxBidId, value: maxBid });
+        }
+      } else {
+        maxBid = parseFloat(data[i].Bid);
+        maxBidId = data[i].Id;
+      }
+
+      if (data[i].Id == minOfferId) {
+        minOffer = Math.min(parseFloat(data[i].Offer), minOffer);
+        if(minOffers.find((x) => x.key == minOfferId) != null){
+          minOffers.find((x) => x.key == minOfferId).value = minOffer;
+        } else {
+        minOffers.push({ key: minOfferId, value: minOffer });
+        }
+      } else {
+        minOffer = parseFloat(data[i].Offer);
+        minOfferId = data[i].Id;
+      }
+    }
+    this.setState({ maxBids: maxBids, minOffers: minOffers });
+  }
 
   prepareDataFunction(rawData) {
     var result = {};
@@ -122,24 +150,42 @@ class WebDataRocksPivotTable extends React.Component {
   updateChart(rawData) {
     chart.destroy();
     this.drawChart(rawData);
-}
+  }
 
   createCharts() {
     this.myRef.webdatarocks.getData({}, this.drawChart, this.updateChart);
   }
 
   customizeCellFunction(cellBuilder, cellData) {
+    //horrible hack
+    if (cellData.label == "Total Sum of Bid") {
+      cellBuilder.text = cellBuilder.text.slice(13);
+    }
+    if (cellData.label == "Total Sum of Offer") {
+      cellBuilder.text = cellBuilder.text.slice(13);
+    }
+    if (cellData.label == "Total Sum of Bid Size - DV01") {
+      cellBuilder.text = cellBuilder.text.slice(13);
+    }
+    if (cellData.label == "Total Sum of Offer Size - DV01") {
+      cellBuilder.text = cellBuilder.text.slice(13);
+    }
     if (!this.state) return null;
-    if (cellData.type == "value" && cellData.measure.name == "Offer") {
-      if (cellData.label >= 2) {
-        cellBuilder.addClass("highOffer");
-      } else if (cellData.label <= 1.2) {
-        cellBuilder.addClass("lowOffer");
-      } else {
-        cellBuilder.addClass("midOffer");
+
+    if (cellData.type == "value" && cellData.measure && cellData.measure.name == "Offer") {
+      var id = cellData.rows.find(
+        (row) => row.hierarchyCaption == "Id"
+      ).caption;
+      var minOffer = this.state.minOffers.find((x) => x.key == id).value;
+      if (minOffer - parseFloat(cellData.label) >= -0.0000001) {
+        cellBuilder.addClass("minOffer");
       }
-    } else if (cellData.type == "value" && cellData.measure.name == "Bid") {
-      if (this.state.maxBid - parseFloat(cellData.label) <= 0.0000001) {
+    } else if (cellData.type == "value" && cellData.measure && cellData.measure.name == "Bid") {
+      var id = cellData.rows.find(
+        (row) => row.hierarchyCaption == "Id"
+      ).caption;
+      var maxBid = this.state.maxBids.find((x) => x.key == id).value;
+      if (maxBid - parseFloat(cellData.label) <= 0.0000001) {
         cellBuilder.addClass("maxBid");
       }
     }
@@ -154,8 +200,8 @@ class WebDataRocksPivotTable extends React.Component {
         id: "wdr-tab-lightblue",
         title: "Save",
         handler: handleSaveReport,
-        icon: this.icons.format
-    })
+        icon: this.icons.save,
+      });
       return tabs;
     };
     var handleSaveReport = () => {
@@ -163,7 +209,7 @@ class WebDataRocksPivotTable extends React.Component {
     };
   }
 
-  saveReport(){
+  saveReport() {
     var report = this.myRef.webdatarocks.getReport();
     delete report.dataSource;
     const cookies = new Cookies();
@@ -173,30 +219,42 @@ class WebDataRocksPivotTable extends React.Component {
   loadReport() {
     const cookies = new Cookies();
     var savedReport = cookies.get("report");
-    if(savedReport != null){
+    if (savedReport != null) {
       return mergeReportAndData(savedReport, getRunsData());
     }
     return getReport(getRunsData());
   }
 
-  handleCellClick(cell){
+  handleCellClick(cell) {
     var row = cell.rowIndex;
     var column = cell.columnIndex;
     var length = this.myRef.webdatarocks.getRows().length;
-    var selectedData = [{name:cell.measure.uniqueName, value:cell.label}];
-    for (var i=0; i < length; i++){
-      if(i != column){
+    var selectedData = [{ name: cell.measure.uniqueName, value: cell.label }];
+    for (var i = 0; i < length; i++) {
+      if (i != column) {
         var otherCell = this.myRef.webdatarocks.getCell(row, i);
         if (otherCell.type == "header") {
-          selectedData.push({name:otherCell.member.hierarchyName, value:otherCell.member.caption});
+          selectedData.push({
+            name: otherCell.member.hierarchyName,
+            value: otherCell.member.caption,
+          });
         } else {
-        selectedData.push({name:otherCell.measure.uniqueName, value:otherCell.label});
+          selectedData.push({
+            name: otherCell.measure.uniqueName,
+            value: otherCell.label,
+          });
         }
       }
     }
     var label = "";
-    for (var i=0; i< selectedData.length; i++){
-      label = label + " " + selectedData[i].name +": " + selectedData[i].value + "\n";
+    for (var i = 0; i < selectedData.length; i++) {
+      label =
+        label +
+        " " +
+        selectedData[i].name +
+        ": " +
+        selectedData[i].value +
+        "\n";
     }
     alert(label);
   }
@@ -217,9 +275,7 @@ class WebDataRocksPivotTable extends React.Component {
             report={data}
             beforetoolbarcreated={this.customizeToolbar}
             cellclick={this.handleCellClick}
-            reportcomplete={() => {
-              this.createCharts();
-            }}
+            //reportcomplete={() => {this.createCharts();}}
           />
         </div>
         <canvas id="chart" width="800" height="500"></canvas>

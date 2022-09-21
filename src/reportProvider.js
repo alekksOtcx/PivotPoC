@@ -4,114 +4,111 @@ export function getReport(data){
         "dataSourceType": "json",
         "data": data
     },
-          "slice": {
-              "expands": {
-      "expandAll": true
-              },
-          "rows": [
-              {
-                  "uniqueName": "Currency"
-              },
-              {
-                  "uniqueName": "Bank"
-              },
-              {
-                  "uniqueName": "Tenor"
-              },
-              {
-                  "uniqueName": "Offer"
-              },
-              {
-                  "uniqueName": "Bid Size - DV01"
-              },
-              {
-                  "uniqueName": "Offer Size - DV01"
-              },
-              {
-                  "uniqueName": "Last Updated"
-              }
-          ],
-          "columns": [
-              {
-                  "uniqueName": "Measures"
-              }
-          ],
-          "measures": [
-              {
-                  "uniqueName": "Bid",
-                  "aggregation": "sum"
-              }
-          ],
-          "flatOrder": [
-              "Currency",
-              "Bank",
-              "Tenor",
-              "Bid",
-              "Offer",
-              "Bid Size - DV01",
-              "Offer Size - DV01",
-              "Last Updated"
-          ],
-          "sorting": {
-      "column": {
-          "type": "asc",
-          "tuple": [],
-          "measure": "Currency"
-      }
-  }
-      },
-      "options": {
-          "grid": {
-              "type": "flat",
-              "title": "",
-              "showFilter": true,
-              "showHeaders": true,
-              "showTotals": false,
-              "showGrandTotals": "off",
-              "showHierarchies": true,
-              "showHierarchyCaptions": true,
-              "showReportFiltersArea": true
-          },
-          "configuratorActive": false,
-          "configuratorButton": true,
-          "showAggregations": true,
-          "showCalculatedValuesButton": true,
-          "drillThrough": true,
-          "showDrillThroughConfigurator": true,
-          "sorting": "on",
-          "datePattern": "dd/MM/yyyy",
-          "dateTimePattern": "dd/MM/yyyy HH:mm:ss",
-          "saveAllFormats": false,
-          "showDefaultSlice": true,
-          "defaultHierarchySortName": "asc"
-      },
-      "conditions": [
-          {
-              "formula": "#value < 1.137",
-              "measure": "Bid",
-              "format": {
-                  "backgroundColor": "#4FC3F7",
-                  "color": "#000000",
-                  "fontFamily": "Arial",
-                  "fontSize": "12px"
-              }
-          }
-      ],
-      "formats": [
-          {
-              "name": "",
-              "thousandsSeparator": " ",
-              "decimalSeparator": ".",
-              "decimalPlaces": 6,
-              "maxSymbols": 20,
-              "currencySymbol": "",
-              "currencySymbolAlign": "left",
-              "nullValue": " ",
-              "infinityValue": "Infinity",
-              "divideByZeroValue": "Infinity"
-          }
-      ]
-  }
+    "slice": {
+        "rows": [
+            {
+                "uniqueName": "Currency",
+                "sort": "unsorted"
+            },
+            {
+                "uniqueName": "Tenor",
+                "sort": "unsorted"
+            },
+            {
+                "uniqueName": "Instrument Type"
+            },
+            {
+                "uniqueName": "Bank",
+                "sort": "unsorted"
+            },
+            {
+                "uniqueName": "Last Updated",
+                "sort": "unsorted"
+            }
+        ],
+        "columns": [
+            {
+                "uniqueName": "Measures"
+            }
+        ],
+        "measures": [
+            {
+                "uniqueName": "Bid",
+                "aggregation": "sum"
+            },
+            {
+                "uniqueName": "Offer",
+                "aggregation": "sum"
+            },
+            {
+                "uniqueName": "Bid Size - DV01",
+                "aggregation": "sum",
+                "format": "55mnkvng"
+            },
+            {
+                "uniqueName": "Offer Size - DV01",
+                "aggregation": "sum",
+                "format": "55mnl2gn"
+            }
+        ],
+        "expands": {
+            "expandAll": true
+        },
+        "flatOrder": [
+            "Currency",
+            "Bank",
+            "Bid",
+            "Offer",
+            "Bid Size - DV01",
+            "Offer Size - DV01",
+            "Last Updated",
+            "Tenor"
+        ]
+    },
+    "options": {
+        "grid": {
+            "type": "classic",
+            "showTotals": "off",
+            "showGrandTotals": "off"
+        }
+    },
+    "formats": [
+        {
+            "name": "",
+            "thousandsSeparator": " ",
+            "decimalSeparator": ".",
+            "decimalPlaces": 6,
+            "maxSymbols": 20,
+            "currencySymbol": "",
+            "currencySymbolAlign": "left",
+            "nullValue": " ",
+            "infinityValue": "Infinity",
+            "divideByZeroValue": "Infinity"
+        },
+        {
+            "name": "55mnkvng",
+            "thousandsSeparator": " ",
+            "decimalSeparator": ".",
+            "decimalPlaces": 0,
+            "currencySymbol": "",
+            "currencySymbolAlign": "left",
+            "nullValue": " ",
+            "textAlign": "right",
+            "isPercent": false
+        },
+        {
+            "name": "55mnl2gn",
+            "thousandsSeparator": " ",
+            "decimalSeparator": ".",
+            "decimalPlaces": 0,
+            "currencySymbol": "",
+            "currencySymbolAlign": "left",
+            "nullValue": " ",
+            "textAlign": "right",
+            "isPercent": false
+        }
+    ]
+}
   }
 
   export function mergeReportAndData(report, data){
